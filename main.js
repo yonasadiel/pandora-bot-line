@@ -1,12 +1,28 @@
-var express = require('express');
-var app     = express();
+const express = require('express');
+const line = require('@line/bot-sdk');
 
-app.set('port', (process.env.PORT || 5000));
+const config = {
+  channelAccessToken: 'iJNPgHXNKjWIZZadSQuraOJJ8aPfFWg0hlXzFSQmbepYFqVhjm85mnrJpYZxUJD8p7hrSRUKaZag4uh21cONkwi57kDycdOmAF7wPhEOz5ekqe45voycraGZSojPfSk+MYjwK7BNb6IMuCY4irnuZwdB04t89/1O/w1cDnyilFU=',
+  channelSecret: 'bbf6df9f8e8b323b4cd584538a3d3e37'
+};
 
-//For avoidong Heroku $PORT error
-app.get('/', function(request, response) {
-    var result = 'App is running'
-    response.send(result);
-}).listen(app.get('port'), function() {
-    console.log('App is running, server is listening on port ', app.get('port'));
+const app = express();
+app.post('/line_webhook', line.middleware(config), (req, res) => {
+  Promise
+    .all(req.body.events.map(handleEvent))
+    .then((result) => res.json(result));
 });
+
+const client = new line.Client(config);
+function handleEvent(event) {
+  if (event.type !== 'message' || event.message.type !== 'text') {
+    return Promise.resolve(null);
+  }
+
+  return client.replyMessage(event.replyToken, {
+    type: 'text',
+    text: event.message.text
+  });
+}
+
+app.listen(process.env.PORT || 5000);

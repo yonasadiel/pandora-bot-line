@@ -20,7 +20,7 @@ function handleEvent(event) {
     return Promise.resolve(null);
   }
 
-  client.pushMessage(event.source.userId, {
+  return client.pushMessage(event.source.userId, {
   	type: 'text',
   	text: '' + event.source.userId + ': ' + event.message.text
   });

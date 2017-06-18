@@ -11,6 +11,8 @@ app.post('/line_webhook', line.middleware(config), (req, res) => {
   Promise
     .all(req.body.events.map(handleEvent))
     .then((result) => res.json(result));
+
+  console.log(json_encode(req));
 });
 
 const client = new line.Client(config);

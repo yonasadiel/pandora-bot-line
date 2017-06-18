@@ -15,15 +15,20 @@ app.post('/line_webhook', line.middleware(config), (req, res) => {
   console.log(JSON.stringify(req));
 });
 
+var text = "undefined";
+
 const client = new line.Client(config);
 function handleEvent(event) {
   if (event.type !== 'message' || event.message.type !== 'text') {
     return Promise.resolve(null);
   }
 
+  var sent_text = text;
+  text = event.message.text;
+
   return client.replyMessage(event.replyToken, {
     type: 'text',
-    text: event.message.text
+    text: sent_text
   });
 }
 

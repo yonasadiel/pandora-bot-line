@@ -12,10 +12,7 @@ app.post('/line_webhook', line.middleware(config), (req, res) => {
     .all(req.body.events.map(handleEvent))
     .then((result) => res.json(result));
 
-  console.log(JSON.stringify(req));
 });
-
-var text = "undefined";
 
 const client = new line.Client(config);
 function handleEvent(event) {
@@ -23,12 +20,14 @@ function handleEvent(event) {
     return Promise.resolve(null);
   }
 
-  var sent_text = text;
-  text = event.message.text;
+  client.pushMessage(event.source.userId, {
+  	type: 'text',
+  	text: '' + event.source.userId + ': ' + event.message.text
+  });
 
   return client.replyMessage(event.replyToken, {
     type: 'text',
-    text: sent_text
+    text: event.source.userId
   });
 }
 

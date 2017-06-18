@@ -12,7 +12,7 @@ app.post('/line_webhook', line.middleware(config), (req, res) => {
     .all(req.body.events.map(handleEvent))
     .then((result) => res.json(result));
 
-  console.log(json_encode(req));
+  console.log(JSON.stringify(req));
 });
 
 const client = new line.Client(config);

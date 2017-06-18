@@ -12,11 +12,12 @@
   ],
   "repository": {
     "type": "git",
-    "url" : "https://git.heroku.com/pandora-bot-line.git"
+    "url": "https://git.heroku.com/pandora-bot-line.git"
   },
   "author": "Yonas Adiel",
   "license": "ISC",
   "dependencies": {
+    "@line/bot-sdk": "^2.0.0",
     "express": "^4.15.3"
   },
   "engines": {

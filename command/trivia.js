@@ -5,6 +5,8 @@
  * Play a game about trivia
  */
 
+const base_path = __dirname + '/../data/trivia/';
+
 function Session(id, question, correct_answer, incorrect_answer) {
 	this.id               = id;
 	this.question         = question;
@@ -13,20 +15,14 @@ function Session(id, question, correct_answer, incorrect_answer) {
 
   this.update = function() {
     const url = 'https://opentdb.com/api.php?amount=1';
-    var path  = this.base_path + this.session_id;
 
     const request = require('request');
-    const fs      = require('fs');
 
     request(url, function(error, response, body) {
       var result = JSON.parse(body);
       this.question         = result.results.question;
       this.correct_answer   = result.results.correct_answer;
       this.incorrect_answer = result.results.incorrect_answers;
-
-      fs.writeFileSync(path, JSON.stringify(this));
-
-      return this.getLastQuestion();
     });
   };
 
@@ -56,7 +52,6 @@ module.exports = {
 	client     : '',
 	session    : '',
 	session_id : '',
-  base_path  : __dirname + '/../data/trivia/',
 
 	receive  : function(argc, args, client, event) {
 		this.event  = event;
@@ -96,7 +91,7 @@ module.exports = {
 
 	getThisSession : function() {
     const fs    = require('fs');
-    var path  = this.base_path + this.session_id;
+    var path    = base_path + this.session_id;
 
     if (!fs.existsSync(path)) {
       return this.makeNewSession();
@@ -113,7 +108,7 @@ module.exports = {
 
   makeNewSession : function() {
     const fs    = require('fs');
-    var path  = this.base_path + this.session_id;
+    var path    = base_path + this.session_id;
 
     var new_session = new Session(this.session_id, "", "", []);
     fs.writeFileSync(path, JSON.stringify(new_session));
@@ -122,7 +117,15 @@ module.exports = {
   },
 
 	getNewQuestion : function() {
-		return this.session.update();
+    const fs  = require('fs');
+    var path  = base_path + this.session_id;
+
+		this.session.update();
+
+    fs.writeFileSync(path, JSON.stringify(this.session));
+
+    return this.getLastQuestion();
+
 	},
 
   getLastQuestion : function() {

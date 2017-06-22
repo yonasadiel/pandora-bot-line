@@ -61,9 +61,10 @@ module.exports = {
     this.session = this.getThisSession();
 
     if (argc < 2) {
-      reply_text  = "Trivia Game!\n";
-      reply_text += "- new    : start a new game\n";
-      reply_text += "- answer : see the answer of current game";
+      var reply_text  = "Trivia Game!\n";
+      reply_text     += "- new : start a new game\n";
+      reply_text     += "- answer : see the answer of current game\n";
+      reply_text     += "- question : see current question";
 
       this.sendResponse(reply_text);
 

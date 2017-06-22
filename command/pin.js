@@ -35,7 +35,8 @@ module.exports = {
     this.session = this.getThisSession();
 
     if (argc < 2) {
-      this.sendResponse(this.session.text);
+      console.log(JSON.stringify(this.session));
+      this.sendResponse(this.session.getText());
     } else {
       this.updateText(args);
       return this.sendResponse("Message pinned");
@@ -62,7 +63,7 @@ module.exports = {
     var path    = base_path + this.session_id;
 
     var new_session = new Session(this.session_id, "no pinned message");
-    fs.writeFileSync(path, JSON.stringify(new_session));
+    fs.writeFileSync(path, "no pinned message");
 
     return new_session;
   },

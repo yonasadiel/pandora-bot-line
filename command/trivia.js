@@ -49,8 +49,8 @@ module.exports = {
 
 		if (argc < 2) {
 			reply_text  = "Trivia Game!\n";
-			reply_text += "  start  : start a new game\n";
-			reply_text += "  answer : see the answer of current game";
+			reply_text += "- start  : start a new game\n";
+			reply_text += "- answer : see the answer of current game";
 
 			return client.replyMessage(event.replyToken,{
 				type : "text",
@@ -73,14 +73,14 @@ module.exports = {
 	},
 
 	make_new : function() {
-		return client.replyMessage(this.event.replyToken,{
+		return this.client.replyMessage(this.event.replyToken,{
 			type : "text",
 			text : "make_new",
 		});
 	},
 
 	answer   : function() {
-		return client.replyMessage(this.event.replyToken,{
+		return this.client.replyMessage(this.event.replyToken,{
 			type : "text",
 			text : "answer",
 		});

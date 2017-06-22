@@ -127,7 +127,7 @@ module.exports = {
 		});
 
 		return found;
-	}
+	},
 
 	make_new : function() {
 		var session_index = this.search_id();
@@ -162,7 +162,5 @@ module.exports = {
 			});	
 
 		}
-
-		
 	},
 };

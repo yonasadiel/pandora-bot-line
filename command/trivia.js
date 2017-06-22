@@ -12,9 +12,22 @@ function Session(id, question, correct_answer, incorrect_answer) {
 	this.incorrect_answer = incorrect_answer;
 
   this.update = function() {
-    this.question         = this.question + "0";
-    this.correct_answer   = "halo";
-    this.incorrect_answer = ["hai","pakabar?"];
+    const url = 'https://opentdb.com/api.php?amount=1';
+    var path  = this.base_path + this.session_id;
+
+    const request = require('request');
+    const fs      = require('fs');
+
+    request(url, function(error, response, body) {
+      var result = JSON.parse(body);
+      this.question         = result.results.question;
+      this.correct_answer   = result.results.correct_answer;
+      this.incorrect_answer = result.results.incorrect_answers;
+
+      fs.writeFileSync(path, JSON.stringify(this.session));
+
+      return this.getLastQuestion();
+    });
   };
 
 	this.getQuestion = function() {
@@ -76,16 +89,13 @@ module.exports = {
         case "question":
           return this.getLastQuestion();
 				default:
-					return client.replyMessage(event.replyToken, {
-						type : "text",
-						text : "Invalid command, use /trivia for help",
-					});
+					return sendResponse("Invalid command, use /trivia for help");
 			}
 		}
 	},
 
 	getThisSession : function() {
-    var fs    = require('fs');
+    const fs    = require('fs');
     var path  = this.base_path + this.session_id;
 
     if (!fs.existsSync(path)) {
@@ -102,7 +112,7 @@ module.exports = {
 	},
 
   makeNewSession : function() {
-    var fs    = require('fs');
+    const fs    = require('fs');
     var path  = this.base_path + this.session_id;
 
     var new_session = new Session(this.session_id, "", "", []);
@@ -112,39 +122,25 @@ module.exports = {
   },
 
 	getNewQuestion : function() {
-		this.session.update();
-
-    var fs    = require('fs');
-    var path  = this.base_path + this.session_id;
-
-    fs.writeFileSync(path, JSON.stringify(this.session));
-
-		return this.getLastQuestion();
+		return this.session.update();
 	},
 
   getLastQuestion : function() {
-    return this.client.replyMessage(this.event.replyToken,{
-      type : "text",
-      text : this.session.getQuestion(),
-    }); 
+    return this.sendResponse(this.session.getQuestion());
   },
 
 	getSessionAnswer : function() {
-
 		if (session.getAnswer !== "") {
-
-			return this.client.replyMessage(this.event.replyToken,{
-				type : "text",
-				text : this.session.getAnswer(),
-			});	
-
+			return this.sendResponse(this.session.getAnswer())
 		} else {
-
-			return this.client.replyMessage(this.event.replyToken,{
-				type : "text",
-				text : "there are no question yet",
-			});	
-
+			return this.sendResponse("there are no question yet");
 		}
 	},
+
+  sendResponse : function(text) {
+    return this.client.replyMessage(this.event.replyToken,{
+      type : "text",
+      text : text,
+    });
+  }
 };

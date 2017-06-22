@@ -80,7 +80,7 @@ function Session(id) {
 module.exports = {
 	event      : "",
 	client     : "",
-	sessions   : [],
+	sessions   : "undefined",
 	session_id : "",
 
 	receive  : function(argc, args, client, event) {
@@ -91,6 +91,10 @@ module.exports = {
 			this.session_id = event.source.userId;
 		} else if (event.source.type === "group") {
 			this.session_id = event.source.groupId;
+		}
+
+		if (this.sessions === "undefined") {
+			this.sessions = [];
 		}
 
 		if (argc < 2) {

@@ -31,9 +31,8 @@ function handleEvent(event) {
   argc = args.length;
 
   fs.readdirSync(command_folder).forEach(file => {
-    console.log(file);
 
-    if (file === args[0]) {
+    if (file === args[0] + ".js") {
       const command = require(file);
 
       return command.receive(argc, args, client, event);

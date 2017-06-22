@@ -110,6 +110,7 @@ module.exports = {
 
 	getNewQuestion : function() {
     console.log("5" + JSON.stringify(this.session));
+    const fs      = require('fs');
     const request = require('request');
     const url = 'https://opentdb.com/api.php?amount=1';
     var path  = base_path + this.session_id;

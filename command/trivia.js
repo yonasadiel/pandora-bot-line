@@ -129,7 +129,7 @@ module.exports = {
   },
 
   getSessionAnswer : function() {
-    if (this.session.getAnswer !== "") {
+    if (this.session.getAnswer() !== "") {
       return this.sendResponse(this.session.getAnswer())
     } else {
       return this.sendResponse("there are no question yet");

@@ -119,7 +119,6 @@ module.exports = {
 	},
 
   updateQuestion : function(error, response, body) {
-    const fs      = require('fs');
     console.log("6" + JSON.stringify(this.session));
     var result = JSON.parse(body);
     this.session.question         = result.results[0].question;

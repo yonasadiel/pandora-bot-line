@@ -27,7 +27,7 @@ function handleEvent(event) {
     return Promise.resolve(null);
   }
 
-  args = events.message.text.split(" ");
+  args = event.message.text.split(" ");
   argc = args.length;
 
   fs.readdirSync(command_folder).forEach(file => {

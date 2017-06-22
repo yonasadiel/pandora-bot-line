@@ -24,7 +24,7 @@ function Session(id, question, correct_answer, incorrect_answer) {
       this.correct_answer   = result.results.correct_answer;
       this.incorrect_answer = result.results.incorrect_answers;
 
-      fs.writeFileSync(path, JSON.stringify(this.session));
+      fs.writeFileSync(path, JSON.stringify(this));
 
       return this.getLastQuestion();
     });

@@ -115,7 +115,7 @@ module.exports = {
     const url = 'https://opentdb.com/api.php?amount=1';
     var path  = base_path + this.session_id;
 
-    request(url, this.updateQuestion.bind(this));
+    request(url, this.updateQuestion).bind(this);
 	},
 
   updateQuestion : function(error, response, body) {

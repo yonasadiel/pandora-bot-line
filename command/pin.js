@@ -5,7 +5,7 @@
  * Pin a message in a group
  */
 
-const base_path = __dirname + '/../data/pin/';
+const base_path = __dirname + '/../data/trivia/';
 
 function Session(id, text) {
   this.id     = id;

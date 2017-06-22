@@ -19,6 +19,7 @@
   "dependencies": {
     "@line/bot-sdk": "^2.0.0",
     "express": "^4.15.3",
+    "html-entities": "^1.2.1",
     "request": "^2.81.0"
   },
   "engines": {

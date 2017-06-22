@@ -3,54 +3,19 @@
  * Trivia Game
  * ------------------
  * Play a game about trivia
- * 
- * Every command file should have receive()
- * function with parameters:
- *   argc   : number of arguments
- *   args   : arguments presents on text message
- *   client : client object defined by line-bot-sdk
- *            for replying / etc
- *   event  : event webhook project that is sent
- *            by LINE messaging app, ex:
- *            "events": [
- *             {
- *               "replyToken": "nHuyWiB7yP5Zw52FIkcQobQuGDXCTA",
- *               "type": "message",
- *               "timestamp": 1462629479859,
- *               "source": {
- *                 "type": "user",
- *                 "userId": "U206d25c2ea6bd87c17655609a1c37cb8"
- *               },
- *               "message": {
- *                 "id": "325708",
- *                 "type": "text",
- *                 "text": "Hello, world"
- *               }
- *           },
- *             {
- *               "replyToken": "nHuyWiB7yP5Zw52FIkcQobQuGDXCTA",
- *               "type": "follow",
- *               "timestamp": 1462629479859,
- *               "source": {
- *                 "type": "user",
- *                 "userId": "U206d25c2ea6bd87c17655609a1c37cb8"
- *               }
- *             }
- *           ]
  */
 
-function Session(id) {
+function Session(id, question, correct_answer, incorrect_answer) {
 	this.id               = id;
-	this.state            = 0;
-	this.question         = "0";
-	this.correct_answer   = "";
-	this.incorrect_answer = [""];
+	this.question         = question;
+	this.correct_answer   = correct_answer;
+	this.incorrect_answer = incorrect_answer;
 
-	this.new = function() {
-		this.question         = this.question + "0";
-		this.correct_answer   = "halo";
-		this.incorrect_answer = ["hai","pakabar?"];
-	};
+  this.update = function() {
+    this.question         = this.question + "0";
+    this.correct_answer   = "halo";
+    this.incorrect_answer = ["hai","pakabar?"];
+  };
 
 	this.getId = function() {
 		return this.id;
@@ -80,7 +45,7 @@ function Session(id) {
 module.exports = {
 	event      : "",
 	client     : "",
-	sessions   : "undefined",
+	session    : "",
 	session_id : "",
 
 	receive  : function(argc, args, client, event) {
@@ -93,9 +58,7 @@ module.exports = {
 			this.session_id = event.source.groupId;
 		}
 
-		if (this.sessions === "undefined") {
-			this.sessions = [];
-		}
+    session = this.getThisSession();
 
 		if (argc < 2) {
 			reply_text  = "Trivia Game!\n";
@@ -110,9 +73,9 @@ module.exports = {
 		} else {
 			switch (args[1]) {
 				case "new":
-					return this.make_new();
+					return this.getNewQuestion();
 				case "answer":
-					return this.answer();
+					return this.getSessionAnswer();
 				default:
 					return client.replyMessage(event.replyToken, {
 						type : "text",
@@ -122,40 +85,112 @@ module.exports = {
 		}
 	},
 
-	search_id : function() {
-		var found = -1;
-		this.sessions.forEach(function(item, index) {
-			if (item.getId === this.session_id) {
-				found = index;
-			}
+	getThisSession : function() {
+		var mysql = require('mysql');
+
+		var con = mysql.createConnection({
+		  host    : "localhost",
+		  user    : "root",
+		  password: "",
+      database: "mydb",
 		});
 
-		return found;
+		con.connect(function(err) {
+		  if (err) throw err;
+
+		  con.query("SELECT * FROM trivia WHERE id = " + this.session_id, function (err, result) {
+		    if (err) throw err;
+
+        if (result.length < 1) {
+          return this.makeNewSession();
+        } else {
+          return new Session(
+            result[0].id,
+            result[0].question,
+            result[0].correct_answer,
+            JSON.parse(result[0].incorrect_answer)
+          );
+        }
+		  });
+		});
 	},
 
-	make_new : function() {
-		var session_index = this.search_id();
+  makeNewSession : function() {
+    var mysql = require('mysql');
 
-		if (session_index === -1) {
-			this.sessions.push(new Session(this.session_id));
-			session_index = this.sessions.length-1;
-		}
+    var con = mysql.createConnection({
+      host    : "localhost",
+      user    : "root",
+      password: "",
+      database: "mydb",
+    });
 
-		this.sessions[session_index].new();
+    con.connect(function(err) {
+      if (err) throw err;
+
+      var query = "";
+
+      query += "INSERT INTO trivia";
+      query += " (id, question, correct_answer, incorrect_answer)";
+      query += " values";
+      query += " ('" + this.session_id + "', '', '', '[\"\"]')";
+
+      con.query(query, function (err, result) {
+        if (err) throw err;
+
+        return new Session(
+          this.session_id,
+          "",
+          "",
+          [],
+        );
+      });
+      
+    });
+  },
+
+	getNewQuestion : function() {
+		this.session.update();
+
+    var mysql = require('mysql');
+
+    var con = mysql.createConnection({
+      host    : "localhost",
+      user    : "root",
+      password: "",
+      database: "mydb",
+    });
+
+    con.connect(function(err) {
+      if (err) throw err;
+
+      var query = "";
+
+      query += "UPDATE trivia SET";
+      query += " question = '" + this.session.question + "'";
+      query += ", correct_answer='" + this.session.correct_answer + "'";
+      query += ", incorrect_answer='" + JSON.stringify(this.session.incorrect_answer) + "'";
+      query += " WHERE";
+      query += " id = " + this.session_id;
+
+      con.query(query, function (err, result) {
+        if (err) throw err;
+      });
+    });
+
 		return this.client.replyMessage(this.event.replyToken,{
 			type : "text",
-			text : this.sessions[session_index].getQuestion(),
+			text : this.session.getQuestion(),
 		});
 	},
 
-	answer : function() {
-		var session_index = this.search_id();
+	getSessionAnswer : function() {
 
-		if (session_index !== -1) {
+		if (session.getAnswer !== "") {
 
 			return this.client.replyMessage(this.event.replyToken,{
 				type : "text",
-				text : this.sessions[session_index].getQuestion(),
+				text : this.sessions[session_index].getAnswer(),
 			});	
 
 		} else {

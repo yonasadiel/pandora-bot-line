@@ -23,6 +23,7 @@ function Session(id, question, correct_answer, incorrect_answer) {
       this.question         = result.results[0].question;
       this.correct_answer   = result.results[0].correct_answer;
       this.incorrect_answer = result.results[0].incorrect_answers;
+      console.log(this.incorrect_answer);
     });
   };
 

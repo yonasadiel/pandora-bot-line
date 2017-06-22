@@ -37,7 +37,7 @@ function Session(id, question, correct_answer, incorrect_answer) {
 module.exports = {
 	event      : '',
 	client     : '',
-	session    : '',
+	session    : {},
 	session_id : '',
 
 	receive  : function(argc, args, client, event) {
@@ -114,6 +114,7 @@ module.exports = {
 
   updateQuestion : function(error, response, body) {
     var result = JSON.parse(body);
+    console.log(JSON.stringify(this.session));
     this.session.question         = result.results[0].question;
     this.session.correct_answer   = result.results[0].correct_answer;
     this.session.incorrect_answer = result.results[0].incorrect_answers;

@@ -1,8 +1,8 @@
 
 /**
- * Trivia Game
+ * Pin Group
  * ------------------
- * Play a game about trivia
+ * Pin a message in a group
  */
 
 const base_path = __dirname + '/../data/trivia/';
@@ -26,19 +26,11 @@ function Session(id, question, correct_answer, incorrect_answer) {
       q += item;
     });
 
-    const Entities = require('html-entities').XmlEntities;
- 
-    const entities = new Entities();
-
-    return entities.decode(q);
+    return q;
   };
 
   this.getAnswer = function() {
-    const Entities = require('html-entities').XmlEntities;
- 
-    const entities = new Entities();
-
-    return entities.decode(this.correct_answer);
+    return this.correct_answer;
   };
 }
 

@@ -49,7 +49,7 @@ module.exports = {
 		} else if (event.source.type === "group") {
 			this.session_id = event.source.groupId;
 		}
-
+    console.log("1" + JSON.stringify(this.session));
     this.session = this.getThisSession();
 
 		if (argc < 2) {
@@ -81,8 +81,10 @@ module.exports = {
     var path    = base_path + this.session_id;
 
     if (!fs.existsSync(path)) {
+    console.log("2a" + JSON.stringify(this.session));
       return this.makeNewSession();
     } else {
+    console.log("2b" + JSON.stringify(this.session));
       var result = JSON.parse(fs.readFileSync(path));
       return new Session(
         result.id,
@@ -94,6 +96,8 @@ module.exports = {
 	},
 
   makeNewSession : function() {
+
+    console.log("3" + JSON.stringify(this.session));
     const fs    = require('fs');
     var path    = base_path + this.session_id;
 
@@ -114,7 +118,6 @@ module.exports = {
 
   updateQuestion : function(error, response, body) {
     var result = JSON.parse(body);
-    console.log(JSON.stringify(this.session));
     this.session.question         = result.results[0].question;
     this.session.correct_answer   = result.results[0].correct_answer;
     this.session.incorrect_answer = result.results[0].incorrect_answers;

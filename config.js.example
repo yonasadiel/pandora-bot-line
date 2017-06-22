@@ -8,8 +8,8 @@
  */
 
 // you can get channel access token and channel secret in line developer page
-var channelAccessToken = 'iJNPgHXNKjWIZZadSQuraOJJ8aPfFWg0hlXzFSQmbepYFqVhjm85mnrJpYZxUJD8p7hrSRUKaZag4uh21cONkwi57kDycdOmAF7wPhEOz5ekqe45voycraGZSojPfSk+MYjwK7BNb6IMuCY4irnuZwdB04t89/1O/w1cDnyilFU=';
-var channelSecret      = 'bbf6df9f8e8b323b4cd584538a3d3e37';
+var channelAccessToken = 'CHANNEL_ACCESS_TOKEN';
+var channelSecret      = 'CHANNEL_SECRET';
 // Customize your own command symbol
 // only message prefixed with command symbol
 // that will be processed

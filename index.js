@@ -27,17 +27,22 @@ function handleEvent(event) {
     return Promise.resolve(null);
   }
 
-  args = event.message.text.split(" ");
-  argc = args.length;
+  // only process messages with commandsymbol in first character
+  if (event.message.text.startsWith(config.commandSymbol)) {
 
-  fs.readdirSync(command_folder).forEach(file => {
+    args = event.message.text.split(" ");
+    argc = args.length;
 
-    if (file === args[0] + ".js") {
-      const command = require(command_folder + file);
+    fs.readdirSync(command_folder).forEach(file => {
 
-      return command.receive(argc, args, client, event);
-    }
-  });
+      if (config.commandSymbol + file === args[0] + ".js") {
+        const command = require(command_folder + file);
+
+        return command.receive(argc, args, client, event);
+      }
+    });
+
+  }
 
 }
 

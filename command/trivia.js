@@ -8,76 +8,76 @@
 const base_path = __dirname + '/../data/trivia/';
 
 function Session(id, question, correct_answer, incorrect_answer) {
-	this.id               = id;
-	this.question         = question;
-	this.correct_answer   = correct_answer;
-	this.incorrect_answer = incorrect_answer;
+  this.id               = id;
+  this.question         = question;
+  this.correct_answer   = correct_answer;
+  this.incorrect_answer = incorrect_answer;
 
-	this.getQuestion = function() {
-		var q   = "";
-		var opt = this.incorrect_answer.concat([this.correct_answer]);
-		opt.sort();
+  this.getQuestion = function() {
+    var q   = "";
+    var opt = this.incorrect_answer.concat([this.correct_answer]);
+    opt.sort();
 
-		q += this.question;
-		opt.forEach(function(item,index) {
-			q += "\n";
-			q += String.fromCharCode(97 + (index % 26));
-			q += ". ";
-			q += item;
-		});
+    q += this.question;
+    opt.forEach(function(item,index) {
+      q += "\n";
+      q += String.fromCharCode(97 + (index % 26));
+      q += ". ";
+      q += item;
+    });
 
-		return q;
-	};
+    return q;
+  };
 
-	this.getAnswer = function() {
-		return this.correct_answer;
-	};
+  this.getAnswer = function() {
+    return this.correct_answer;
+  };
 }
 
 module.exports = {
-	event      : '',
-	client     : '',
-	session    : {},
-	session_id : '',
+  event      : '',
+  client     : '',
+  session    : {},
+  session_id : '',
 
-	receive  : function(argc, args, client, event) {
-		this.event  = event;
-		this.client = client;
+  receive  : function(argc, args, client, event) {
+    this.event  = event;
+    this.client = client;
 
-		if (event.source.type === "user") {
-			this.session_id = event.source.userId;
-		} else if (event.source.type === "group") {
-			this.session_id = event.source.groupId;
-		}
+    if (event.source.type === "user") {
+      this.session_id = event.source.userId;
+    } else if (event.source.type === "group") {
+      this.session_id = event.source.groupId;
+    }
     console.log("1" + JSON.stringify(this.session));
     this.session = this.getThisSession();
     console.log("4" + JSON.stringify(this.session));
 
-		if (argc < 2) {
-			reply_text  = "Trivia Game!\n";
-			reply_text += "- new    : start a new game\n";
-			reply_text += "- answer : see the answer of current game";
+    if (argc < 2) {
+      reply_text  = "Trivia Game!\n";
+      reply_text += "- new    : start a new game\n";
+      reply_text += "- answer : see the answer of current game";
 
-			return client.replyMessage(event.replyToken,{
-				type : "text",
-				text : reply_text,
-			});
+      return client.replyMessage(event.replyToken,{
+        type : "text",
+        text : reply_text,
+      });
 
-		} else {
-			switch (args[1]) {
-				case "new":
-					return this.getNewQuestion();
-				case "answer":
-					return this.getSessionAnswer();
+    } else {
+      switch (args[1]) {
+        case "new":
+          return this.getNewQuestion();
+        case "answer":
+          return this.getSessionAnswer();
         case "question":
           return this.getLastQuestion();
-				default:
-					return sendResponse("Invalid command, use /trivia for help");
-			}
-		}
-	},
+        default:
+          return sendResponse("Invalid command, use /trivia for help");
+      }
+    }
+  },
 
-	getThisSession : function() {
+  getThisSession : function() {
     const fs    = require('fs');
     var path    = base_path + this.session_id;
 
@@ -94,7 +94,7 @@ module.exports = {
         result.incorrect_answer
       );
     }
-	},
+  },
 
   makeNewSession : function() {
 
@@ -108,7 +108,7 @@ module.exports = {
     return new_session;
   },
 
-	getNewQuestion : function() {
+  getNewQuestion : function() {
     console.log("5" + JSON.stringify(this.session));
     const fs      = require('fs');
     const request = require('request');
@@ -116,9 +116,10 @@ module.exports = {
     var path  = base_path + this.session_id;
 
     request(url, this.updateQuestion).bind(this);
-	},
+  },
 
   updateQuestion : function(error, response, body) {
+    
     console.log("6" + JSON.stringify(this.session));
     var result = JSON.parse(body);
     this.session.question         = result.results[0].question;
@@ -134,13 +135,13 @@ module.exports = {
     return this.sendResponse(this.session.getQuestion());
   },
 
-	getSessionAnswer : function() {
-		if (session.getAnswer !== "") {
-			return this.sendResponse(this.session.getAnswer())
-		} else {
-			return this.sendResponse("there are no question yet");
-		}
-	},
+  getSessionAnswer : function() {
+    if (session.getAnswer !== "") {
+      return this.sendResponse(this.session.getAnswer())
+    } else {
+      return this.sendResponse("there are no question yet");
+    }
+  },
 
   sendResponse : function(text) {
     return this.client.replyMessage(this.event.replyToken,{

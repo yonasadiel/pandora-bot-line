@@ -51,6 +51,7 @@ module.exports = {
 		}
     console.log("1" + JSON.stringify(this.session));
     this.session = this.getThisSession();
+    console.log("4" + JSON.stringify(this.session));
 
 		if (argc < 2) {
 			reply_text  = "Trivia Game!\n";

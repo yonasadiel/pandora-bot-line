@@ -43,7 +43,7 @@ module.exports = {
 	client     : '',
 	session    : '',
 	session_id : '',
-  base_path  : '../data/trivia/',
+  base_path  : __dirname + '/../data/trivia/',
 
 	receive  : function(argc, args, client, event) {
 		this.event  = event;

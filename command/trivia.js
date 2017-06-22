@@ -86,7 +86,7 @@ module.exports = {
 
 	getThisSession : function() {
     var fs    = require('fs');
-    var path  = base_path + this.session_id;
+    var path  = this.base_path + this.session_id;
 
     if (!fs.existsSync(path)) {
       return this.makeNewSession();
@@ -103,7 +103,7 @@ module.exports = {
 
   makeNewSession : function() {
     var fs    = require('fs');
-    var path  = base_path + this.session_id;
+    var path  = this.base_path + this.session_id;
 
     var new_session = new Session(this.session_id, "", "", []);
     fs.writeFileSync(path, JSON.stringify(new_session));
@@ -115,7 +115,7 @@ module.exports = {
 		this.session.update();
 
     var fs    = require('fs');
-    var path  = base_path + this.session_id;
+    var path  = this.base_path + this.session_id;
 
     fs.writeFileSync(path, JSON.stringify(this.session));
 

@@ -109,17 +109,19 @@ module.exports = {
     const url = 'https://opentdb.com/api.php?amount=1';
     var path  = base_path + this.session_id;
 
-    request(url, function(error, response, body) {
-      var result = JSON.parse(body);
-      this.session.question         = result.results[0].question;
-      this.session.correct_answer   = result.results[0].correct_answer;
-      this.session.incorrect_answer = result.results[0].incorrect_answers;
-
-      fs.writeFileSync(path, JSON.stringify(this.session));
-
-      return this.getLastQuestion();
-    });
+    request(url, this.updateQuestion);
 	},
+
+  updateQuestion : function(error, response, body) {
+    var result = JSON.parse(body);
+    this.session.question         = result.results[0].question;
+    this.session.correct_answer   = result.results[0].correct_answer;
+    this.session.incorrect_answer = result.results[0].incorrect_answers;
+
+    fs.writeFileSync(path, JSON.stringify(this.session));
+
+    return this.getLastQuestion();
+  },
 
   getLastQuestion : function() {
     return this.sendResponse(this.session.getQuestion());

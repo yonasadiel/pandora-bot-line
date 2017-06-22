@@ -52,10 +52,12 @@ module.exports = {
     this.event  = event;
     this.client = client;
 
-    if (event.source.type === "user") {
-      this.session_id = event.source.userId;
-    } else if (event.source.type === "group") {
+    if (event.source.type === "group") {
       this.session_id = event.source.groupId;
+    } else if (event.source.type === "room") {
+      this.session_id = event.source.roomId;
+    } else if (event.source.type === "user") {
+      this.session_id = event.source.userId;
     }
 
     this.session = this.getThisSession();

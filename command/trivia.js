@@ -49,9 +49,8 @@ module.exports = {
     } else if (event.source.type === "group") {
       this.session_id = event.source.groupId;
     }
-    console.log("1" + JSON.stringify(this.session));
+
     this.session = this.getThisSession();
-    console.log("4" + JSON.stringify(this.session));
 
     if (argc < 2) {
       reply_text  = "Trivia Game!\n";
@@ -82,10 +81,8 @@ module.exports = {
     var path    = base_path + this.session_id;
 
     if (!fs.existsSync(path)) {
-    console.log("2a" + JSON.stringify(this.session));
       return this.makeNewSession();
     } else {
-    console.log("2b" + JSON.stringify(this.session));
       var result = JSON.parse(fs.readFileSync(path));
       return new Session(
         result.id,
@@ -97,8 +94,6 @@ module.exports = {
   },
 
   makeNewSession : function() {
-
-    console.log("3" + JSON.stringify(this.session));
     const fs    = require('fs');
     var path    = base_path + this.session_id;
 
@@ -109,7 +104,6 @@ module.exports = {
   },
 
   getNewQuestion : function() {
-    console.log("5" + JSON.stringify(this.session));
     const request = require('request');
     const url = 'https://opentdb.com/api.php?amount=1';
 
@@ -120,7 +114,6 @@ module.exports = {
     const fs   = require('fs');
     var path   = base_path + this.session_id;
     
-    console.log("6" + JSON.stringify(this.session));
     var result = JSON.parse(body);
     this.session.question         = result.results[0].question;
     this.session.correct_answer   = result.results[0].correct_answer;
@@ -136,7 +129,7 @@ module.exports = {
   },
 
   getSessionAnswer : function() {
-    if (session.getAnswer !== "") {
+    if (this.session.getAnswer !== "") {
       return this.sendResponse(this.session.getAnswer())
     } else {
       return this.sendResponse("there are no question yet");

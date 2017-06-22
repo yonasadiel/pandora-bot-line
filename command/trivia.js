@@ -19,6 +19,8 @@ function Session(id, question, correct_answer, incorrect_answer) {
     const request = require('request');
 
     request(url, function(error, response, body) {
+      console.log(body);
+      
       var result = JSON.parse(body);
       this.question         = result.results.question;
       this.correct_answer   = result.results.correct_answer;

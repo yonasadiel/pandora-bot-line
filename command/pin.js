@@ -7,30 +7,12 @@
 
 const base_path = __dirname + '/../data/trivia/';
 
-function Session(id, question, correct_answer, incorrect_answer) {
-  this.id               = id;
-  this.question         = question;
-  this.correct_answer   = correct_answer;
-  this.incorrect_answer = incorrect_answer;
+function Session(id, text) {
+  this.id     = id;
+  this.text   = text;
 
-  this.getQuestion = function() {
-    var q   = "";
-    var opt = this.incorrect_answer.concat([this.correct_answer]);
-    opt.sort();
-
-    q += this.question;
-    opt.forEach(function(item,index) {
-      q += "\n";
-      q += String.fromCharCode(97 + (index % 26));
-      q += ". ";
-      q += item;
-    });
-
-    return q;
-  };
-
-  this.getAnswer = function() {
-    return this.correct_answer;
+  this.getText = function() {
+    return this.text;
   };
 }
 
@@ -53,26 +35,10 @@ module.exports = {
     this.session = this.getThisSession();
 
     if (argc < 2) {
-      reply_text  = "Trivia Game!\n";
-      reply_text += "- new    : start a new game\n";
-      reply_text += "- answer : see the answer of current game";
-
-      return client.replyMessage(event.replyToken,{
-        type : "text",
-        text : reply_text,
-      });
-
+      this.sendResponse(this.session.text);
     } else {
-      switch (args[1]) {
-        case "new":
-          return this.getNewQuestion();
-        case "answer":
-          return this.getSessionAnswer();
-        case "question":
-          return this.getLastQuestion();
-        default:
-          return sendResponse("Invalid command, use /trivia for help");
-      }
+      this.updateText(args);
+      return this.sendResponse("Message pinned");
     }
   },
 
@@ -83,12 +49,10 @@ module.exports = {
     if (!fs.existsSync(path)) {
       return this.makeNewSession();
     } else {
-      var result = JSON.parse(fs.readFileSync(path));
+      var result = fs.readFileSync(path);
       return new Session(
-        result.id,
-        result.question,
-        result.correct_answer,
-        result.incorrect_answer
+        this.session_id,
+        result
       );
     }
   },
@@ -97,43 +61,10 @@ module.exports = {
     const fs    = require('fs');
     var path    = base_path + this.session_id;
 
-    var new_session = new Session(this.session_id, "", "", []);
+    var new_session = new Session(this.session_id, "no pinned message");
     fs.writeFileSync(path, JSON.stringify(new_session));
 
     return new_session;
-  },
-
-  getNewQuestion : function() {
-    const request = require('request');
-    const url = 'https://opentdb.com/api.php?amount=1';
-
-    request(url, this.updateQuestion.bind(this));
-  },
-
-  updateQuestion : function(error, response, body) {
-    const fs   = require('fs');
-    var path   = base_path + this.session_id;
-    
-    var result = JSON.parse(body);
-    this.session.question         = result.results[0].question;
-    this.session.correct_answer   = result.results[0].correct_answer;
-    this.session.incorrect_answer = result.results[0].incorrect_answers;
-
-    fs.writeFileSync(path, JSON.stringify(this.session));
-
-    return this.getLastQuestion();
-  },
-
-  getLastQuestion : function() {
-    return this.sendResponse(this.session.getQuestion());
-  },
-
-  getSessionAnswer : function() {
-    if (this.session.getAnswer() !== "") {
-      return this.sendResponse(this.session.getAnswer())
-    } else {
-      return this.sendResponse("there are no question yet");
-    }
   },
 
   sendResponse : function(text) {
@@ -141,5 +72,21 @@ module.exports = {
       type : "text",
       text : text,
     });
-  }
+  },
+
+  updateText : function(args) {
+    const fs   = require('fs');
+    var path   = base_path + this.session_id;
+    
+    var text = "";
+    args.forEach(function(item,index) {
+      if (index != 0) {
+        text += " " + item;
+      }
+    });
+
+    this.session.text = text;
+
+    fs.writeFileSync(path, text);
+  },
 };

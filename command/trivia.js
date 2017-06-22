@@ -65,10 +65,7 @@ module.exports = {
       reply_text += "- new    : start a new game\n";
       reply_text += "- answer : see the answer of current game";
 
-      return client.replyMessage(event.replyToken,{
-        type : "text",
-        text : reply_text,
-      });
+      this.sendResponse(reply_text);
 
     } else {
       switch (args[1]) {
@@ -79,7 +76,7 @@ module.exports = {
         case "question":
           return this.getLastQuestion();
         default:
-          return sendResponse("Invalid command, use /trivia for help");
+          return this.sendResponse("Invalid command, use /trivia for help");
       }
     }
   },

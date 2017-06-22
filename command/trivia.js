@@ -13,20 +13,6 @@ function Session(id, question, correct_answer, incorrect_answer) {
 	this.correct_answer   = correct_answer;
 	this.incorrect_answer = incorrect_answer;
 
-  this.update = function() {
-    const url = 'https://opentdb.com/api.php?amount=1';
-
-    const request = require('request');
-
-    request(url, function(error, response, body) {
-      var result = JSON.parse(body);
-      this.question         = result.results[0].question;
-      this.correct_answer   = result.results[0].correct_answer;
-      this.incorrect_answer = result.results[0].incorrect_answers;
-      console.log(this.incorrect_answer);
-    });
-  };
-
 	this.getQuestion = function() {
 		var q   = "";
 		var opt = this.incorrect_answer.concat([this.correct_answer]);
@@ -118,15 +104,21 @@ module.exports = {
   },
 
 	getNewQuestion : function() {
-    const fs  = require('fs');
+    const fs      = require('fs');
+    const request = require('request');
+    const url = 'https://opentdb.com/api.php?amount=1';
     var path  = base_path + this.session_id;
 
-		this.session.update();
+    request(url, function(error, response, body) {
+      var result = JSON.parse(body);
+      this.session.question         = result.results[0].question;
+      this.session.correct_answer   = result.results[0].correct_answer;
+      this.session.incorrect_answer = result.results[0].incorrect_answers;
 
-    fs.writeFileSync(path, JSON.stringify(this.session));
+      fs.writeFileSync(path, JSON.stringify(this.session));
 
-    return this.getLastQuestion();
-
+      return this.getLastQuestion();
+    });
 	},
 
   getLastQuestion : function() {

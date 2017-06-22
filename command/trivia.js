@@ -55,7 +55,7 @@ module.exports = {
 			this.session_id = event.source.groupId;
 		}
 
-    session = this.getThisSession();
+    this.session = this.getThisSession();
 
 		if (argc < 2) {
 			reply_text  = "Trivia Game!\n";

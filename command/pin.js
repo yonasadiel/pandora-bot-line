@@ -50,7 +50,7 @@ module.exports = {
     if (!fs.existsSync(path)) {
       return this.makeNewSession();
     } else {
-      var result = fs.readFileSync(path);
+      var result = fs.readFileSync(path, "utf8");
       return new Session(
         this.session_id,
         result
@@ -63,7 +63,7 @@ module.exports = {
     var path    = base_path + this.session_id;
 
     var new_session = new Session(this.session_id, "no pinned message");
-    fs.writeFileSync(path, "no pinned message");
+    fs.writeFileSync(path, "no pinned message", "utf8");
 
     return new_session;
   },
@@ -81,7 +81,7 @@ module.exports = {
     
     var text = "";
     args.forEach(function(item,index) {
-      if (index != 0) {
+      if (index !== 0) {
         text += " " + item;
       }
     });

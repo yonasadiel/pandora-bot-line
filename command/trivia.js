@@ -26,6 +26,25 @@ module.exports = {
     }
 
     this.getThisSession();
+  },
+
+  getThisSession : function() {
+    const request = require('request');
+    var url       = 'https://script.google.com/macros/s/AKfycbyiLiyDT88t2cBZq9sJFK6xkmnfdwCrsb7FF49eN0TrZKbFr7s/exec?app=trivia';
+    url          += '&action=get';
+    url          += '&id=' + this.session_id;
+
+    request(url, this.getThisSessionCallback.bind(this));
+  },
+
+  getThisSessionCallback : function(error, response, body) {
+    var result = JSON.parse(body);
+    this.session = {
+      id               : result.id,
+      question         : result.question,
+      correct_answer   : result.correct_answer,
+      incorrect_answer : result.incorrect_answer
+    };
 
     if (argc < 2) {
       var reply_text  = "Trivia Game!\n";
@@ -59,25 +78,6 @@ module.exports = {
           return this.sendResponse("Invalid command, use /trivia for help");
       }
     }
-  },
-
-  getThisSession : function() {
-    const request = require('request');
-    var url       = 'https://script.google.com/macros/s/AKfycbyiLiyDT88t2cBZq9sJFK6xkmnfdwCrsb7FF49eN0TrZKbFr7s/exec?app=trivia';
-    url          += '&action=get';
-    url          += '&id=' + this.session_id;
-
-    request(url, this.getThisSessionCallback.bind(this));
-  },
-
-  getThisSessionCallback : function(error, response, body) {
-    var result = JSON.parse(body);
-    this.session = {
-      id               : result.id,
-      question         : result.question,
-      correct_answer   : result.correct_answer,
-      incorrect_answer : result.incorrect_answer
-    };
   },
 
   getNewQuestion : function(cat) {
@@ -132,7 +132,7 @@ module.exports = {
 
   getSessionAnswer : function() {
     if (this.getAnswer() !== "") {
-      return this.sendResponse(this.getAnswer())
+      return this.sendResponse(this.getAnswer());
     } else {
       return this.sendResponse("there are no question yet");
     }

@@ -27,7 +27,7 @@ module.exports = {
 
       bool = true;
 
-      text += file;
+      text += file.substr(0, file.length-3);
     });
 
     return this.sendResponse(text);

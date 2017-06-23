@@ -7,41 +7,6 @@
 
 const base_path = __dirname + '/../data/trivia/';
 
-function Session(id, question, correct_answer, incorrect_answer) {
-  this.id               = id;
-  this.question         = question;
-  this.correct_answer   = correct_answer;
-  this.incorrect_answer = incorrect_answer;
-
-  this.getQuestion = function() {
-    var q   = "";
-    var opt = this.incorrect_answer.concat([this.correct_answer]);
-    opt.sort();
-
-    q += this.question;
-    opt.forEach(function(item,index) {
-      q += "\n";
-      q += String.fromCharCode(97 + (index % 26));
-      q += ". ";
-      q += item;
-    });
-
-    const Entities = require('html-entities').XmlEntities;
- 
-    const entities = new Entities();
-
-    return entities.decode(q);
-  };
-
-  this.getAnswer = function() {
-    const Entities = require('html-entities').XmlEntities;
- 
-    const entities = new Entities();
-
-    return entities.decode(this.correct_answer);
-  };
-}
-
 module.exports = {
   event      : '',
   client     : '',
@@ -107,12 +72,13 @@ module.exports = {
 
   getThisSessionCallback : function(error, response, body) {
     var result = JSON.parse(body);
-      this.session = new Session(
-        result.id,
-        result.question,
-        result.correct_answer,
-        result.incorrect_answer
-    );
+    console.log(body);
+    this.session = {
+      id               : result.id,
+      question         : result.question,
+      correct_answer   : result.correct_answer,
+      incorrect_answer : result.incorrect_answer
+    };
   },
 
   getNewQuestion : function(cat) {
@@ -120,24 +86,15 @@ module.exports = {
     var url = 'https://opentdb.com/api.php?amount=1';
 
     switch (cat) {
-      case 'general':
-        url += '&category=9'; break;
-      case 'science':
-        url += '&category=17'; break;
-      case 'cs':
-        url += '&category=18'; break;
-      case 'tech':
-        url += '&category=30'; break;
-      case 'math':
-        url += '&category=19'; break;
-      case 'geo':
-        url += '&category=22'; break;
-      case 'myth':
-        url += '&category=20'; break;
-      case 'japan':
-        url += '&category=31'; break;
-      case 'cartoon':
-        url += '&category=32'; break;
+      case 'general': url += '&category=9';  break;
+      case 'science': url += '&category=17'; break;
+      case 'cs':      url += '&category=18'; break;
+      case 'tech':    url += '&category=30'; break;
+      case 'math':    url += '&category=19'; break;
+      case 'geo':     url += '&category=22'; break;
+      case 'myth':    url += '&category=20'; break;
+      case 'japan':   url += '&category=31'; break;
+      case 'cartoon': url += '&category=32'; break;
       case 'random':
         let cat = [9,17,18,30,19,22,20,31,32];
         let rand_cat = cat[Math.floor(Math.random()*cat.length)];
@@ -167,12 +124,12 @@ module.exports = {
   },
 
   getLastQuestion : function() {
-    return this.sendResponse(this.session.getQuestion());
+    return this.sendResponse(this.getQuestion());
   },
 
   getSessionAnswer : function() {
-    if (this.session.getAnswer() !== "") {
-      return this.sendResponse(this.session.getAnswer())
+    if (this.getAnswer() !== "") {
+      return this.sendResponse(this.getAnswer())
     } else {
       return this.sendResponse("there are no question yet");
     }
@@ -200,5 +157,37 @@ module.exports = {
     cat_list += 'usage example: /trivia new general';
 
     return this.sendResponse(cat_list);
+  },
+
+  // ---------------------- //
+  // SESSION CLASS FUNCTION //
+  // ---------------------- //
+
+  getQuestion : function() {
+    var q   = "";
+    var opt = this.session.incorrect_answer.concat([this.session.correct_answer]);
+    opt.sort();
+
+    q += this.session.question;
+    opt.forEach(function(item,index) {
+      q += "\n";
+      q += String.fromCharCode(97 + (index % 26));
+      q += ". ";
+      q += item;
+    });
+
+    const Entities = require('html-entities').XmlEntities;
+ 
+    const entities = new Entities();
+
+    return entities.decode(q);
+  },
+
+  getAnswer : function() {
+    const Entities = require('html-entities').XmlEntities;
+ 
+    const entities = new Entities();
+
+    return entities.decode(this.session.correct_answer);
   },
 };

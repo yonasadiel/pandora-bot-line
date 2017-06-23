@@ -37,7 +37,6 @@ module.exports = {
     this.session = this.getThisSession();
 
     if (argc < 2) {
-      console.log(JSON.stringify(this.session));
       this.sendResponse(this.session.getText());
     } else {
       this.updateText(args);

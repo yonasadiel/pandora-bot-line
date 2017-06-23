@@ -60,7 +60,7 @@ module.exports = {
       this.session_id = event.source.userId;
     }
 
-    this.session = this.getThisSession();
+    this.getThisSession();
 
     if (argc < 2) {
       var reply_text  = "Trivia Game!\n";
@@ -97,31 +97,21 @@ module.exports = {
   },
 
   getThisSession : function() {
-    const fs    = require('fs');
-    var path    = base_path + this.session_id;
+    const request = require('request');
+    var url       = 'https://script.google.com/macros/s/AKfycbyiLiyDT88t2cBZq9sJFK6xkmnfdwCrsb7FF49eN0TrZKbFr7s/exec';
+    url          += '?action=get';
+    url          += '&id=' + this.session_id;
 
-    if (!fs.existsSync(path)) {
-      return this.makeNewSession();
-    } else {
-      var result = JSON.parse(fs.readFileSync(path));
-      return new Session(
-        result.id,
-        result.question,
-        result.correct_answer,
-        result.incorrect_answer
-      );
-    }
+    request(url, this.getThisSessionCallback.bind(this));
   },
 
-  makeNewSession : function() {
-    const fs    = require('fs');
-    var path    = base_path + this.session_id;
-
-    var new_session = new Session(this.session_id, "", "", []);
-    fs.writeFileSync(path, JSON.stringify(new_session));
-
-    return new_session;
-  },
+  getThisSessionCallback : function(error, response, body) {
+    var result = JSON.parse(body);
+    this.session.id               = result.id;
+    this.session.question         = result.question;
+    this.session.correct_answer   = result.correct_answer;
+    this.session.incorrect_answer = result.incorrect_answer;
+  }
 
   getNewQuestion : function(cat) {
     const request = require('request');
@@ -159,15 +149,17 @@ module.exports = {
   },
 
   updateQuestion : function(error, response, body) {
-    const fs   = require('fs');
-    var path   = base_path + this.session_id;
-    
     var result = JSON.parse(body);
     this.session.question         = '[' + result.results[0].category + ']\n' + result.results[0].question;
     this.session.correct_answer   = result.results[0].correct_answer;
     this.session.incorrect_answer = result.results[0].incorrect_answers;
 
-    fs.writeFileSync(path, JSON.stringify(this.session));
+    const request = require('request');
+    var url       = 'https://script.google.com/macros/s/AKfycbyiLiyDT88t2cBZq9sJFK6xkmnfdwCrsb7FF49eN0TrZKbFr7s/exec';
+    url          += '?action=save';
+    url          += '&data=' + JSON.stringify(this.session);
+
+    request(url);
 
     return this.getLastQuestion();
   },

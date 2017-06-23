@@ -67,7 +67,8 @@ module.exports = {
       reply_text     += "- new : start a new game\n";
       reply_text     += "- answer : see the answer of current game\n";
       reply_text     += "- question : see current question\n";
-      reply_text     += "- category : see available categories";
+      reply_text     += "- category : see available categories\n";
+      reply_text     += "- about : more on trivia";
 
       this.sendResponse(reply_text);
 
@@ -87,6 +88,8 @@ module.exports = {
           return this.getLastQuestion();
         case "category":
           return this.getCategoryList();
+        case "about":
+          return this.sendResponse('Pandora Bot powered by opentdb.com');
         default:
           return this.sendResponse("Invalid command, use /trivia for help");
       }

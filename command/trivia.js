@@ -107,10 +107,12 @@ module.exports = {
 
   getThisSessionCallback : function(error, response, body) {
     var result = JSON.parse(body);
-    this.session.id               = result.id;
-    this.session.question         = result.question;
-    this.session.correct_answer   = result.correct_answer;
-    this.session.incorrect_answer = result.incorrect_answer;
+      this.session = new Session(
+        result.id,
+        result.question,
+        result.correct_answer,
+        result.incorrect_answer
+    );
   },
 
   getNewQuestion : function(cat) {
@@ -161,12 +163,10 @@ module.exports = {
 
     request(url);
 
-console.log(JSON.stringify(this.session));
     return this.getLastQuestion().bind(this);
   },
 
   getLastQuestion : function() {
-console.log(JSON.stringify(this.session));
     return this.sendResponse(this.session.getQuestion());
   },
 

@@ -189,7 +189,7 @@ module.exports = {
   },
 
   getCategoryList : function() {
-    var cat_list;
+    var cat_list = '';
     cat_list += 'Available category:\n';
     cat_list += '- general: General knowledge\n';
     cat_list += '- science: Sains umum\n';

@@ -108,6 +108,7 @@ module.exports = {
 
   updateQuestion : function(error, response, body) {
     var result = JSON.parse(body);
+    this.session.id               = this.session_id;
     this.session.question         = '[' + result.results[0].category + ']\n' + result.results[0].question;
     this.session.correct_answer   = result.results[0].correct_answer;
     this.session.incorrect_answer = result.results[0].incorrect_answers;

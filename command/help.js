@@ -40,7 +40,13 @@
  */
 
 module.exports = {
+  event      : '',
+  client     : '',
+
 	receive : function(argc, args, client, event) {
+    this.event  = event;
+    this.client = client;
+    
 		if (argc > 1) {
 			return this.sendResponse("don't understand the argument");
 		} else {

@@ -18,11 +18,11 @@ module.exports = {
 
   getCommand : function() {
     const fs      = require('fs');
-    
+
     let text = 'Command List:\n';
     let bool = false;
 
-    fs.readdirSync('./').forEach(file => {
+    fs.readdirSync('./command/').forEach(file => {
       if (bool) { text += ', '; }
 
       bool = true;

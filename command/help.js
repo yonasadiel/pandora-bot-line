@@ -42,15 +42,19 @@
 module.exports = {
 	receive : function(argc, args, client, event) {
 		if (argc > 1) {
-			return client.replyMessage(event.replyToken,{
-				type: "text",
-				text: "don't understand the argument",
-			});
+			return this.sendResponse("don't understand the argument");
 		} else {
-			return client.replyMessage(event.replyToken,{
-				type: "text",
-				text: "Pandora Bot built by Yonas Adiel with NodeJS in HerokuApp",
-			});
+      var txt = "Pandora Bot built by Yonas Adiel with NodeJS in HerokuApp\n";
+      txt    += "use /cmd for command list";
+			return this.sendResponse(txt);
 		}
-	}
+	},
+
+  sendResponse : function(text) {
+    return this.client.replyMessage(this.event.replyToken,{
+      type : "text",
+      text : text,
+    });
+  },
+
 };

@@ -23,7 +23,7 @@ module.exports = {
       this.session_id = event.source.userId;
     }
 
-    this.session = this.getThisSession();
+    this.getThisSession();
   },
 
   getThisSession : function() {
@@ -36,6 +36,7 @@ module.exports = {
   },
 
   getThisSessionCallback : function(error, response, body) {
+    console.log(body);
     var result = JSON.parse(body);
     this.session = {
       id   : result.id,

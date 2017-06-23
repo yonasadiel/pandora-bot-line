@@ -66,18 +66,27 @@ module.exports = {
       var reply_text  = "Trivia Game!\n";
       reply_text     += "- new : start a new game\n";
       reply_text     += "- answer : see the answer of current game\n";
-      reply_text     += "- question : see current question";
+      reply_text     += "- question : see current question\n";
+      reply_text     += "- category : see available categories";
 
       this.sendResponse(reply_text);
 
     } else {
       switch (args[1]) {
         case "new":
-          return this.getNewQuestion();
+          if (argc === 3) {
+            return this.getNewQuestion(args[2]);
+          } else if (argc === 2) {
+            return this.getNewQuestion('random');
+          } else {
+            return this.sendResponse('invalid syntax');
+          }
         case "answer":
           return this.getSessionAnswer();
         case "question":
           return this.getLastQuestion();
+        case "category":
+          return this.getCategoryList();
         default:
           return this.sendResponse("Invalid command, use /trivia for help");
       }
@@ -111,9 +120,37 @@ module.exports = {
     return new_session;
   },
 
-  getNewQuestion : function() {
+  getNewQuestion : function(cat) {
     const request = require('request');
-    const url = 'https://opentdb.com/api.php?amount=1';
+    var url = 'https://opentdb.com/api.php?amount=1';
+
+    switch (cat) {
+      case 'general':
+        url += '&category=9'; break;
+      case 'science':
+        url += '&category=17'; break;
+      case 'cs':
+        url += '&category=18'; break;
+      case 'tech':
+        url += '&category=30'; break;
+      case 'math':
+        url += '&category=19'; break;
+      case 'geo':
+        url += '&category=22'; break;
+      case 'myth':
+        url += '&category=20'; break;
+      case 'japan':
+        url += '&category=31'; break;
+      case 'cartoon':
+        url += '&category=32'; break;
+      case 'random':
+        let cat = [9,17,18,30,19,22,20,31,32];
+        let rand_cat = cat[Math.floor(Math.random()*cat.length)];
+        url += '&category=' + rand_cat;
+        break;
+      default:
+        return this.sendResponse('category not valid');
+    }
 
     request(url, this.updateQuestion.bind(this));
   },
@@ -123,7 +160,7 @@ module.exports = {
     var path   = base_path + this.session_id;
     
     var result = JSON.parse(body);
-    this.session.question         = result.results[0].question;
+    this.session.question         = '[' + result.results[0].category + ']\n' + result.results[0].question;
     this.session.correct_answer   = result.results[0].correct_answer;
     this.session.incorrect_answer = result.results[0].incorrect_answers;
 
@@ -149,5 +186,22 @@ module.exports = {
       type : "text",
       text : text,
     });
-  }
+  },
+
+  getCategoryList : function() {
+    var cat_list;
+    cat_list += 'Available category:\n';
+    cat_list += '- general: General knowledge\n';
+    cat_list += '- science: Sains umum\n';
+    cat_list += '- cs: Computer science\n';
+    cat_list += '- tech: Technology\n';
+    cat_list += '- math: Mathematic\n';
+    cat_list += '- geo: Geography\n';
+    cat_list += '- myth: Mythology\n';
+    cat_list += '- japan: Anime and Manga\n';
+    cat_list += '- cartoon: Cartoon and Animation\n';
+    cat_list += 'usage example: /trivia new general';
+
+    return this.sendResponse(cat_list);
+  },
 };

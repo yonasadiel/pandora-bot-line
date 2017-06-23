@@ -29,7 +29,7 @@ module.exports = {
     });
 
     return this.sendResponse(text);
-  }
+  },
 
   sendResponse : function(text) {
     return this.client.replyMessage(this.event.replyToken,{

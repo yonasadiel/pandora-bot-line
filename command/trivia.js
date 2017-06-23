@@ -161,7 +161,7 @@ module.exports = {
 
     request(url);
 
-    return this.getLastQuestion();
+    return this.getLastQuestion().bind(this);
   },
 
   getLastQuestion : function() {

@@ -72,7 +72,6 @@ module.exports = {
 
   getThisSessionCallback : function(error, response, body) {
     var result = JSON.parse(body);
-    console.log(body);
     this.session = {
       id               : result.id,
       question         : result.question,
@@ -118,9 +117,11 @@ module.exports = {
     url          += '&action=save';
     url          += '&data=' + JSON.stringify(this.session);
 
-    request(url);
+    request(url, function(error, response, body) {
+      console.log(body);
+    });
 
-    return this.getLastQuestion().bind(this);
+    return this.getLastQuestion();
   },
 
   getLastQuestion : function() {

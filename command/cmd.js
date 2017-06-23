@@ -17,6 +17,8 @@ module.exports = {
   },
 
   getCommand : function() {
+    const fs      = require('fs');
+    
     let text = 'Command List:\n';
     let bool = false;
 

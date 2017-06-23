@@ -161,10 +161,12 @@ module.exports = {
 
     request(url);
 
+console.log(JSON.stringify(this.session));
     return this.getLastQuestion().bind(this);
   },
 
   getLastQuestion : function() {
+console.log(JSON.stringify(this.session));
     return this.sendResponse(this.session.getQuestion());
   },
 

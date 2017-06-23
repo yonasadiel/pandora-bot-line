@@ -115,7 +115,7 @@ module.exports = {
     const request = require('request');
     var url       = 'https://script.google.com/macros/s/AKfycbyiLiyDT88t2cBZq9sJFK6xkmnfdwCrsb7FF49eN0TrZKbFr7s/exec?app=trivia';
     url          += '&action=save';
-    url          += '&data=' + JSON.stringify(this.session);
+    url          += '&data=' + encodeURI(JSON.stringify(this.session));
 
     request(url, function(error, response, body) {
       console.log(body);

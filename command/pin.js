@@ -5,17 +5,6 @@
  * Pin a message in a group
  */
 
-const base_path = __dirname + '/../data/pin/';
-
-function Session(id, text) {
-  this.id     = id;
-  this.text   = text;
-
-  this.getText = function() {
-    return this.text;
-  };
-}
-
 module.exports = {
   event      : '',
   client     : '',
@@ -35,38 +24,30 @@ module.exports = {
     }
 
     this.session = this.getThisSession();
+  },
+
+  getThisSession : function() {
+    const request = require('request');
+    var url       = 'https://script.google.com/macros/s/AKfycbyiLiyDT88t2cBZq9sJFK6xkmnfdwCrsb7FF49eN0TrZKbFr7s/exec?app=pin';
+    url          += '&action=get';
+    url          += '&id=' + this.session_id;
+
+    request(url, this.getThisSessionCallback.bind(this));
+  },
+
+  getThisSessionCallback : function(error, response, body) {
+    var result = JSON.parse(body);
+    this.session = {
+      id   : result.id,
+      text : result.text
+    };
 
     if (argc < 2) {
-      this.sendResponse(this.session.getText());
+      this.sendResponse(this.session.text);
     } else {
       this.updateText(args);
       return this.sendResponse("Message pinned");
     }
-  },
-
-  getThisSession : function() {
-    const fs    = require('fs');
-    var path    = base_path + this.session_id;
-
-    if (!fs.existsSync(path)) {
-      return this.makeNewSession();
-    } else {
-      var result = fs.readFileSync(path, "utf8");
-      return new Session(
-        this.session_id,
-        result
-      );
-    }
-  },
-
-  makeNewSession : function() {
-    const fs    = require('fs');
-    var path    = base_path + this.session_id;
-
-    var new_session = new Session(this.session_id, "no pinned message");
-    fs.writeFileSync(path, "no pinned message", "utf8");
-
-    return new_session;
   },
 
   sendResponse : function(text) {
@@ -76,10 +57,7 @@ module.exports = {
     });
   },
 
-  updateText : function(args) {
-    const fs   = require('fs');
-    var path   = base_path + this.session_id;
-    
+  updateText : function(args) {    
     var text = "";
     args.forEach(function(item,index) {
       if (index !== 0) {
@@ -89,6 +67,13 @@ module.exports = {
 
     this.session.text = text;
 
-    fs.writeFileSync(path, text);
+    const request = require('request');
+    var url       = 'https://script.google.com/macros/s/AKfycbyiLiyDT88t2cBZq9sJFK6xkmnfdwCrsb7FF49eN0TrZKbFr7s/exec?app=pin';
+    url          += '&action=save';
+    url          += '&data=' + escape(JSON.stringify(this.session));
+
+    request(url, function(error, response, body) {
+      //
+    });
   },
 };

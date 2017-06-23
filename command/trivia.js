@@ -117,10 +117,9 @@ module.exports = {
     var url       = 'https://script.google.com/macros/s/AKfycbyiLiyDT88t2cBZq9sJFK6xkmnfdwCrsb7FF49eN0TrZKbFr7s/exec?app=trivia';
     url          += '&action=save';
     url          += '&data=' + escape(JSON.stringify(this.session));
-    console.log(url);
 
     request(url, function(error, response, body) {
-      console.log(body);
+      //
     });
 
     return this.getLastQuestion();

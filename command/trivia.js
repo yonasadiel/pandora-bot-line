@@ -98,8 +98,8 @@ module.exports = {
 
   getThisSession : function() {
     const request = require('request');
-    var url       = 'https://script.google.com/macros/s/AKfycbyiLiyDT88t2cBZq9sJFK6xkmnfdwCrsb7FF49eN0TrZKbFr7s/exec';
-    url          += '?action=get';
+    var url       = 'https://script.google.com/macros/s/AKfycbyiLiyDT88t2cBZq9sJFK6xkmnfdwCrsb7FF49eN0TrZKbFr7s/exec?app=trivia';
+    url          += '&action=get';
     url          += '&id=' + this.session_id;
 
     request(url, this.getThisSessionCallback.bind(this));
@@ -155,8 +155,8 @@ module.exports = {
     this.session.incorrect_answer = result.results[0].incorrect_answers;
 
     const request = require('request');
-    var url       = 'https://script.google.com/macros/s/AKfycbyiLiyDT88t2cBZq9sJFK6xkmnfdwCrsb7FF49eN0TrZKbFr7s/exec';
-    url          += '?action=save';
+    var url       = 'https://script.google.com/macros/s/AKfycbyiLiyDT88t2cBZq9sJFK6xkmnfdwCrsb7FF49eN0TrZKbFr7s/exec?app=trivia';
+    url          += '&action=save';
     url          += '&data=' + JSON.stringify(this.session);
 
     request(url);

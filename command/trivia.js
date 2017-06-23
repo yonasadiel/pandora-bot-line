@@ -111,7 +111,7 @@ module.exports = {
     this.session.question         = result.question;
     this.session.correct_answer   = result.correct_answer;
     this.session.incorrect_answer = result.incorrect_answer;
-  }
+  },
 
   getNewQuestion : function(cat) {
     const request = require('request');

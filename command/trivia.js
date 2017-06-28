@@ -69,9 +69,10 @@ module.exports = {
   mainHandler : function() {
     if (this.argc < 2) {
       var reply_text  = "Trivia Game!\n";
-      reply_text     += "- new : start a new game\n";
-      reply_text     += "- answer : see the answer of current game\n";
+      reply_text     += "- new [cat] : start a new game with category\n";
       reply_text     += "- question : see current question\n";
+      reply_text     += "- answer [a|b|c|d] : answer the question\n";
+      reply_text     += "- reveal : open the answer\n";
       reply_text     += "- category : see available categories\n";
       reply_text     += "- about : more on trivia";
 
@@ -235,14 +236,14 @@ module.exports = {
     for (var i in opt) {
       if (String.fromCharCode(97 + (i % 26)) == ans.toLowerCase()) {
         check = 0;
-        if (opt[i] == this.correct_answer) {
+        if (opt[i] == this.session.correct_answer) {
           check = 1;
         }
       }
     }
 
     if (check === 0) {
-      this.sendResponse('Wrong Answer');
+      this.sendResponse(this.session.players[this.indexOfPlayer()].name + ': Wrong Answer!');
     } else if (check === 1) {
       this.session.players[this.indexOfPlayer()].score++;
       this.session.question         = '';

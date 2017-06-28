@@ -197,7 +197,7 @@ module.exports = {
     });
 
     for (var i in players_tmp) {
-      reply_text += '(' + players_tmp[i][0] + ') ' + players_tmp[i][1];
+      reply_text += '(' + players_tmp[i][0] + ') ' + players_tmp[i][1] + '\n';
     }
     this.sendResponse(reply_text);
   },

@@ -5,17 +5,23 @@
  * Play a game about trivia
  */
 
-const base_path = __dirname + '/../data/trivia/';
-
 module.exports = {
+  argc       : 0,
+  args       : [],
   event      : '',
   client     : '',
   session    : {},
   session_id : '',
 
   receive  : function(argc, args, client, event) {
+    this.argc   = argc;
+    this.args   = args;
     this.event  = event;
     this.client = client;
+
+    if (! this.event.source.hasOwnProperty('userId')) {
+      return this.sendResponse('This bot only support LINE version 7.5.0 or higher.\nTry updating, block, and re-add this bot.');
+    }
 
     if (event.source.type === "group") {
       this.session_id = event.source.groupId;
@@ -38,15 +44,30 @@ module.exports = {
   },
 
   getThisSessionCallback : function(error, response, body) {
-    var result = JSON.parse(body);
-    this.session = {
-      id               : result.id,
-      question         : result.question,
-      correct_answer   : result.correct_answer,
-      incorrect_answer : result.incorrect_answer
-    };
+    console.log(body);
+    this.session = JSON.parse(body);
 
-    if (argc < 2) {
+    if (this.indexOfPlayer() === -1) {
+      this.client
+        .getProfile(this.event.source.userId)
+        .then((profile) => {
+          this.session.players.add({
+            id    : this.event.source.userId,
+            name  : profile.displayName,
+            score : 0,
+          });
+          this.saveProfile();
+        })
+        .catch((err) => {
+          this.sendResponse('You jave to add this bot first.');
+        });
+    } else {
+      this.mainHandler();
+    }    
+  },
+
+  mainHandler : function() {
+    if (this.argc < 2) {
       var reply_text  = "Trivia Game!\n";
       reply_text     += "- new : start a new game\n";
       reply_text     += "- answer : see the answer of current game\n";
@@ -57,25 +78,33 @@ module.exports = {
       this.sendResponse(reply_text);
 
     } else {
-      switch (args[1]) {
+      switch (this.args[1]) {
         case "new":
-          if (argc === 3) {
-            return this.getNewQuestion(args[2]);
-          } else if (argc === 2) {
+          if (this.argc === 3) {
+            return this.getNewQuestion(this.args[2]);
+          } else if (this.argc === 2) {
             return this.getNewQuestion('random');
           } else {
             return this.sendResponse('invalid syntax');
           }
         case "answer":
+          if (this.argc === 3) {
+            return this.getAnswer(this.args[2]);
+          } else {
+            return this.sendResponse('Example Usage: "!trivia answer a"');
+          }
+        case "reveal":
           return this.getSessionAnswer();
         case "question":
           return this.getLastQuestion();
         case "category":
           return this.getCategoryList();
+        case "score":
+          return this.getScore();
         case "about":
           return this.sendResponse('Pandora Bot powered by opentdb.com');
         default:
-          return this.sendResponse("Invalid command, use /trivia for help");
+          return this.sendResponse("Invalid command, use !trivia for help");
       }
     }
   },
@@ -108,33 +137,26 @@ module.exports = {
 
   updateQuestion : function(error, response, body) {
     var result = JSON.parse(body);
-    this.session.id               = this.session_id;
     this.session.question         = '[' + result.results[0].category + ']\n' + result.results[0].question;
     this.session.correct_answer   = result.results[0].correct_answer;
     this.session.incorrect_answer = result.results[0].incorrect_answers;
 
-    const request = require('request');
-    var url       = 'https://script.google.com/macros/s/AKfycbyiLiyDT88t2cBZq9sJFK6xkmnfdwCrsb7FF49eN0TrZKbFr7s/exec?app=trivia';
-    url          += '&action=save';
-    url          += '&data=' + escape(JSON.stringify(this.session));
-
-    request(url, function(error, response, body) {
-      //
-    });
+    this.saveData();
 
     return this.getLastQuestion();
   },
 
   getLastQuestion : function() {
+    if (this.session.question === '') {
+      return this.sendResponse('no question. make new with !trivia new');
+    }
+
     return this.sendResponse(this.getQuestion());
   },
 
   getSessionAnswer : function() {
-    if (this.getAnswer() !== "") {
-      return this.sendResponse(this.getAnswer());
-    } else {
-      return this.sendResponse("there are no question yet");
-    }
+    return this.sendResponse(this.getCorrectAnswer());
+    //
   },
 
   sendResponse : function(text) {
@@ -156,9 +178,25 @@ module.exports = {
     cat_list += '- myth: Mythology\n';
     cat_list += '- japan: Anime and Manga\n';
     cat_list += '- cartoon: Cartoon and Animation\n';
-    cat_list += 'usage example: /trivia new general';
+    cat_list += 'usage example: !trivia new general';
 
     return this.sendResponse(cat_list);
+  },
+
+  getScore : function()  {
+    let reply_text  = '';
+    let players_tmp = [];
+    for (var i in this.session.players) {
+      players_tmp.push([this.session.players[i].score, this.session.players[i].name]); 
+    }
+    players_tmp.sort(function(a, b) {
+      return b[0]-a[0];
+    });
+    
+    for (var i in players_tmp) {
+      reply_text += '(' + players_tmp[i][0] + ') ' + players_tmp[i][1];
+    }
+    this.sendResponse(reply_text);
   },
 
   // ---------------------- //
@@ -166,8 +204,8 @@ module.exports = {
   // ---------------------- //
 
   getQuestion : function() {
-    var q   = "";
-    var opt = this.session.incorrect_answer.concat([this.session.correct_answer]);
+    let q   = "";
+    let opt = this.session.incorrect_answer.concat([this.session.correct_answer]);
     opt.sort();
 
     q += this.session.question;
@@ -185,11 +223,92 @@ module.exports = {
     return entities.decode(q);
   },
 
-  getAnswer : function() {
+  getAnswer : function(ans) {
+    if (this.session.question === '') {
+      return this.sendResponse('No new question. Make one with !trivia new');
+    }
+
+    let opt = this.session.incorrect_answer.concat([this.session.correct_answer]);
+    opt.sort();
+
+    let check = -1;
+    for (var i in opt) {
+      if (String.fromCharCode(97 + (i % 26)) == ans.toLowerCase()) {
+        check = 0;
+        if (opt[i] == this.correct_answer) {
+          check = 1;
+        }
+      }
+    }
+
+    if (check === 0) {
+      this.sendResponse('Wrong Answer');
+    } else if (check === 1) {
+      this.session.players[this.indexOfPlayer()].score++;
+      this.session.question         = '';
+      this.session.correct_answer   = '';
+      this.session.incorrect_answer = [];
+      this.saveData();
+
+      let reply_text = 'Correct!\n';
+      reply_text += '+1 for ' + this.session.players[this.indexOfPlayer()].name + '\n';
+      reply_text += 'Use !score to check score.';
+      this.sendResponse(reply_text);
+    } else {
+      this.sendResponse('Wrong format');
+    }
+  },
+
+  getCorrectAnswer : function() {
+    if (this.session.question === '') {
+      return 'No new question. Make one with !trivia new';
+    }
+
     const Entities = require('html-entities').XmlEntities;
  
     const entities = new Entities();
 
     return entities.decode(this.session.correct_answer);
+
   },
+
+  // --------------- //
+  // DATA CONTROLLER //
+  // --------------- //
+
+  indexOfPlayer : function() {
+    let id_fnd = -1;
+    for (var i in this.session.players) {
+      if (this.session.players[i].id == this.event.source.userId) {
+        id_fnd = i;
+      }
+    }
+    return id_fnd;
+  },
+
+  saveData : function() {
+    const request = require('request');
+    var url       = 'https://script.google.com/macros/s/AKfycbyiLiyDT88t2cBZq9sJFK6xkmnfdwCrsb7FF49eN0TrZKbFr7s/exec?app=trivia';
+    url          += '&action=save';
+    url          += '&data=' + escape(JSON.stringify(this.session));
+
+    request(url, function(error, response, body) {
+      //
+    });
+  },
+
+  saveProfile : function() {
+    const request = require('request');
+    var url       = 'https://script.google.com/macros/s/AKfycbyiLiyDT88t2cBZq9sJFK6xkmnfdwCrsb7FF49eN0TrZKbFr7s/exec?app=trivia';
+    url          += '&action=save';
+    url          += '&data=' + escape(JSON.stringify(this.session));
+
+    request(url, this.saveProfileCallback.bind(this));
+  },
+
+  saveProfileCallback : function(error, response, body) {
+    this.mainHandler();
+    //
+  },
+
 };

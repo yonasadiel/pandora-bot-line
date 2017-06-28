@@ -15,7 +15,7 @@ var channelSecret      = 'bbf6df9f8e8b323b4cd584538a3d3e37';
 // that will be processed
 // You can leave it blank for processing all
 // message received
-var commandSymbol      = '/';
+var commandSymbol      = '!';
 
 module.exports = {
 	channelAccessToken : channelAccessToken,

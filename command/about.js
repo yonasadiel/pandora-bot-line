@@ -50,7 +50,7 @@ module.exports = {
 		if (argc > 1) {
 			return this.sendResponse("don't understand the argument");
 		} else {
-      var txt = "use !cmd for command list";
+      var txt = "Pandora Bot built by Yonas Adiel with NodeJS in HerokuApp\n";
 			return this.sendResponse(txt);
 		}
 	},

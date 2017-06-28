@@ -51,7 +51,7 @@ module.exports = {
       this.client
         .getProfile(this.event.source.userId)
         .then((profile) => {
-          this.session.players.add({
+          this.session.players.push({
             id    : this.event.source.userId,
             name  : profile.displayName,
             score : 0,
@@ -59,7 +59,7 @@ module.exports = {
           this.saveProfile();
         })
         .catch((err) => {
-          this.sendResponse('You jave to add this bot first.');
+          this.sendResponse('You have to add this bot first.');
         });
     } else {
       this.mainHandler();
@@ -192,7 +192,7 @@ module.exports = {
     players_tmp.sort(function(a, b) {
       return b[0]-a[0];
     });
-    
+
     for (var i in players_tmp) {
       reply_text += '(' + players_tmp[i][0] + ') ' + players_tmp[i][1];
     }

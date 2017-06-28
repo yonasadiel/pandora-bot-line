@@ -74,6 +74,7 @@ module.exports = {
       reply_text     += "- answer [a|b|c|d] : answer the question\n";
       reply_text     += "- reveal : open the answer\n";
       reply_text     += "- category : see available categories\n";
+      reply_text     += "- score : get the latest score\n";
       reply_text     += "- about : more on trivia";
 
       this.sendResponse(reply_text);
@@ -156,8 +157,9 @@ module.exports = {
   },
 
   getSessionAnswer : function() {
-    return this.sendResponse(this.getCorrectAnswer());
-    //
+    let correct_answer = 'The answer is ' + this.getCorrectAnswer();
+    this.sendResponse(correct_answer);
+    this.resetGame();
   },
 
   sendResponse : function(text) {
@@ -198,6 +200,13 @@ module.exports = {
       reply_text += '(' + players_tmp[i][0] + ') ' + players_tmp[i][1];
     }
     this.sendResponse(reply_text);
+  },
+
+  resetGame : function() {
+    this.session.question         = '';
+    this.session.correct_answer   = '';
+    this.session.incorrect_answer = [];
+    this.saveData();
   },
 
   // ---------------------- //
@@ -246,14 +255,11 @@ module.exports = {
       this.sendResponse(this.session.players[this.indexOfPlayer()].name + ': Wrong Answer!');
     } else if (check === 1) {
       this.session.players[this.indexOfPlayer()].score++;
-      this.session.question         = '';
-      this.session.correct_answer   = '';
-      this.session.incorrect_answer = [];
-      this.saveData();
-
+      this.resetGame();
+      
       let reply_text = 'Correct!\n';
       reply_text += '+1 for ' + this.session.players[this.indexOfPlayer()].name + '\n';
-      reply_text += 'Use !score to check score.';
+      reply_text += 'Use "!trivia score" to check score.';
       this.sendResponse(reply_text);
     } else {
       this.sendResponse('Wrong format');

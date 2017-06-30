@@ -98,7 +98,7 @@ module.exports = {
         case "reveal":
           return this.getSessionAnswer();
         case "question":
-          return this.getLastQuestion();
+          return this.getLastQuestion('');
         case "category":
           return this.getCategoryList();
         case "score":
@@ -138,6 +138,7 @@ module.exports = {
   },
 
   updateQuestion : function(error, response, body) {
+    let last_answer = this.session.correct_answer;
     var result = JSON.parse(body);
     this.session.question         = '[' + result.results[0].category + ']\n' + result.results[0].question;
     this.session.correct_answer   = result.results[0].correct_answer;
@@ -145,17 +146,17 @@ module.exports = {
 
     this.saveData();
 
-    return this.getLastQuestion();
+    return this.getLastQuestion(last_answer);
   },
 
-  getLastQuestion : function() {
+  getLastQuestion : function(last_answer) {
     if (this.session.question === '') {
       return this.sendResponse('no question. make new with !trivia new');
     }
 
     let reply_text = '';
-    if (this.session.correct_answer != '') {
-      reply_text += 'Last question answer : ' + this.session.correct_answer + '\n';
+    if (last_answer != '') {
+      reply_text += 'Last question answer : ' + last_answer + '\n';
     }
     reply_text += this.getQuestion();
 

@@ -16,6 +16,7 @@ const command_folder  = "./command/";
 
 const app = express();
 app.post('/line_webhook', line.middleware(config), (req, res) => {
+  console.log(req.body.events);
   for (var i in req.body.events) {
     handleEvent(req.body.events[i]);
   }
@@ -27,7 +28,6 @@ app.post('/line_webhook', line.middleware(config), (req, res) => {
 
 const client = new line.Client(config);
 function handleEvent(event) {
-  console.log(event);
   if (event.type !== 'message' || event.message.type !== 'text') {
     return Promise.resolve(null);
   }

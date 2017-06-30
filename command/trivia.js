@@ -156,7 +156,7 @@ module.exports = {
 
     let reply_text = '';
     if (last_answer != '') {
-      reply_text += 'Last question answer : ' + last_answer + '\n';
+      reply_text += 'Last question answer : ' + last_answer + '\n\n';
     }
     reply_text += this.getQuestion();
 
@@ -259,7 +259,7 @@ module.exports = {
     }
 
     if (check === 0) {
-      this.session.players[this.indexOfPlayer()].score-=5;
+      this.session.players[this.indexOfPlayer()].score -= 5;
       this.saveData();
 
       let reply_text = 'WRONG!\n';
@@ -267,11 +267,11 @@ module.exports = {
       reply_text += 'Use "!trivia score" to check score.';
       this.sendResponse(reply_text);
     } else if (check === 1) {
-      this.session.players[this.indexOfPlayer()].score++;
+      this.session.players[this.indexOfPlayer()].score += 10;
       this.resetGame();
       
       let reply_text = 'Correct!\n';
-      reply_text += '+1 for ' + this.session.players[this.indexOfPlayer()].name + '\n';
+      reply_text += '+10 for ' + this.session.players[this.indexOfPlayer()].name + '\n';
       reply_text += 'Use "!trivia score" to check score.';
       this.sendResponse(reply_text);
     } else {

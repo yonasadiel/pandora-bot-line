@@ -153,7 +153,13 @@ module.exports = {
       return this.sendResponse('no question. make new with !trivia new');
     }
 
-    return this.sendResponse(this.getQuestion());
+    let reply_text = '';
+    if (this.session.correct_answer != '') {
+      reply_text += 'Last question answer : ' + this.session.correct_answer;
+    }
+    reply_text += this.getQuestion();
+
+    return this.sendResponse();
   },
 
   getSessionAnswer : function() {

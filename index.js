@@ -27,6 +27,7 @@ app.post('/line_webhook', line.middleware(config), (req, res) => {
 
 const client = new line.Client(config);
 function handleEvent(event) {
+  console.log(event);
   if (event.type !== 'message' || event.message.type !== 'text') {
     return Promise.resolve(null);
   }

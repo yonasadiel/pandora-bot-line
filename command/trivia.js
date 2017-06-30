@@ -155,11 +155,11 @@ module.exports = {
 
     let reply_text = '';
     if (this.session.correct_answer != '') {
-      reply_text += 'Last question answer : ' + this.session.correct_answer;
+      reply_text += 'Last question answer : ' + this.session.correct_answer + '\n';
     }
     reply_text += this.getQuestion();
 
-    return this.sendResponse();
+    return this.sendResponse(reply_text);
   },
 
   getSessionAnswer : function() {

@@ -16,9 +16,13 @@ const command_folder  = "./command/";
 
 const app = express();
 app.post('/line_webhook', line.middleware(config), (req, res) => {
-  Promise
-    .all(req.body.events.map(handleEvent))
-    .then((result) => res.json(result));
+  for (var i in req.body.events) {
+    handleEvent(req.body.events[i]);
+  }
+  // use this to do async way
+  // Promise
+  //   .all(req.body.events.map(handleEvent))
+  //   .then((result) => res.json(result));
 });
 
 const client = new line.Client(config);

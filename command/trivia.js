@@ -160,7 +160,7 @@ module.exports = {
     }
     reply_text += this.getQuestion();
 
-    if (this.event.source.roomId == 'ss') {
+    if (this.event.source.roomId == 'R8f3279543e04b85d2740eda92ca9f428') {
       reply_text = '[General Knowledge]\n';
       reply_text += 'When is Airin\'s birthday?\n';
       reply_text += 'a. today\n';

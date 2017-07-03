@@ -160,6 +160,15 @@ module.exports = {
     }
     reply_text += this.getQuestion();
 
+    if (this.event.source.roomId == 'ss') {
+      reply_text = '[General Knowledge]\n';
+      reply_text += 'When is Airin\'s birthday?\n';
+      reply_text += 'a. today\n';
+      reply_text += 'b. June 3rd\n';
+      reply_text += 'c. now\n';
+      reply_text += 'd. this monday';
+    }
+
     return this.sendResponse(reply_text);
   },
 

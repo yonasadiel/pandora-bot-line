@@ -144,7 +144,7 @@ module.exports = {
     this.session.correct_answer   = result.results[0].correct_answer;
     this.session.incorrect_answer = result.results[0].incorrect_answers;
 
-    if (this.event.source.roomId == 'R8f3279543e04b85d2740eda92ca9f428') {
+    if (this.event.source.roomId == 'R08895602805bfbd9760a2f047d69f7cf') {
       this.session.question         = '[General Knowledge]\nWhen is Airin\'s birthday?\n';
       this.session.correct_answer   = 'today';
       this.session.incorrect_answer = ['yesterday', 'tommorow', 'last saturday'];

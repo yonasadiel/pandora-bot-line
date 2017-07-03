@@ -33,7 +33,7 @@ function handleEvent(event) {
   }
 
   if (event.source.type == 'room' && event.source.roomId == 'R8f3279543e04b85d2740eda92ca9f428') {
-    return event.replyMessage(event.replyToken,[{
+    return client.replyMessage(event.replyToken,[{
       type : "text",
       text : 'Happy Birthday Airin!\nWish U All The Best!\nSori ya telat, baru pulang dari kerjaan. Eh tau nda kalo aku lagi kerja? Enak di sini, kerja sambil belajar. Eh, ini ucapan ulang tahun deng, kok malah aku yang cerita.\n\nSemoga harapan-harapanmu dalam tahun ini bisa terwujud! Eh omong2 emang harapanmu apa?\n\nCantik? Sudah kok.\nPinter? Juga sudah.\nPacar? Aku juga belom loh.\n#ehem #abaikan\n\nPokoknya aku bantu amini.',
     },{

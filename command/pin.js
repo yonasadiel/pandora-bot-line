@@ -169,7 +169,7 @@ module.exports = {
       return this.sendResponse("No topic " + topic + " found.");
     }
 
-    delete this.session.text[topic_name_old];
+    delete this.session.text[topic];
 
     this.sendResponse("Topic " + topic + " deleted.");
 

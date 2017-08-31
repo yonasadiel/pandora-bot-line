@@ -107,7 +107,7 @@ module.exports = {
     let topic_name_old = this.args[2];
     let topic_name_new = this.args[3];
 
-    if (typeof this.session.text[topic_name_old] == undefined) {
+    if (typeof this.session.text[topic_name_old] == "undefined") {
       return this.sendResponse("No topic " + topic_name_old + " found.");
     }
 
@@ -132,7 +132,7 @@ module.exports = {
 
     let topic = this.args[2];
 
-    if (typeof this.session.text[topic] == undefined) {
+    if (typeof this.session.text[topic] == "undefined") {
       return this.sendResponse("No topic " + topic + " found.");
     }
     
@@ -150,7 +150,7 @@ module.exports = {
       if (index > 2) { text += item; }
     });
 
-    if (typeof this.session.text[topic] == undefined) {
+    if (typeof this.session.text[topic] == "undefined") {
       return this.sendResponse("No topic " + topic + " found.");
     }
 
@@ -165,7 +165,7 @@ module.exports = {
 
     let topic = this.args[2];
 
-    if (typeof this.session.text[topic] == undefined) {
+    if (typeof this.session.text[topic] == "undefined") {
       return this.sendResponse("No topic " + topic + " found.");
     }
 

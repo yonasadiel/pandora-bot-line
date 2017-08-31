@@ -170,6 +170,7 @@ module.exports = {
     }
 
     delete this.session.text[topic];
+    this.updateSession();
 
     this.sendResponse("Topic " + topic + " deleted.");
 

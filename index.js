@@ -32,6 +32,19 @@ function handleEvent(event) {
     return Promise.resolve(null);
   }
 
+  if (event.source.type == 'room' && event.source.roomId == 'R93808e514962041f7941e43d4dfc5c1b') {
+    return client.replyMessage(event.replyToken,[{
+      type : "text",
+      text : 'Happy Birthday Airin!\nWish U All The Best!\nSori ya telat, baru pulang dari kerjaan. Eh tau nda kalo aku lagi kerja? Enak di sini, kerja sambil belajar. Eh, ini ucapan ulang tahun deng, kok malah aku yang cerita.\n\nSemoga harapan-harapanmu dalam tahun ini bisa terwujud! Eh omong2 emang harapanmu apa?\n\nCantik? Sudah kok.\nPinter? Juga sudah.\nPacar? Aku juga belom loh.\n#ehem #abaikan\n\nPokoknya aku bantu amini.',
+    },{
+      type : "text",
+      text : 'Seize The Day! Terus berkarya, membanggakan orang tua, menjadi yang terbaik di antara yang terbaik. Percaya diri kalo kamu bisa, entah dunia berkata apa. Jangan pernah puas sama diri sendiri. Terus magis, berkembang, tak kenal lelah. Percaya Tuhan selalu menyertai.\n\nGa ada manusia yang bisa sempurna (kecuali aku sih) jadi jangan jatuh karena satu-dua kegagalan.',
+    },{
+      type : "text",
+      text : 'Karena tempat teksnya sudah hampir habis (maksimal 3 balon juga) jadi terpaksa sekian ucapannya (padahal sebenernya memang nda pinter ngarang kata2 T.T maafkan, maklum cowok). But srsly, jarang2 aku bikin ucapan ulang tahun sepanjang ini. Liat sendiri juga kan nek di grup KEKL mesti cuma HBD <nama> tok.\n\nGood luck kuliahnya.\nStay in Touch.\nKalo ke Semarang kabari ya, kangen (minta ditraktir maksudnya).',
+    }]);
+  }
+
   // only process messages with commandsymbol in first character
   if (event.message.text.startsWith(config.commandSymbol)) {
 

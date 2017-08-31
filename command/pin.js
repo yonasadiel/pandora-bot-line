@@ -93,7 +93,7 @@ module.exports = {
     if (this.argc < 3) { return this.sendResponse("Usage: !pin new <topic>"); }
     if (this.argc > 3) { return this.sendResponse("For now, the topic limited to 1 word only. use \"_\" to replace space."); }
 
-    let new_topic = this.agrs[2];
+    let new_topic = this.args[2];
     this.session.text[new_topic] = "- empty -";
 
     return this.sendResponse("Topic " + new_topic + " created.");

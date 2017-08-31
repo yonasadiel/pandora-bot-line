@@ -96,6 +96,7 @@ module.exports = {
     let new_topic = this.args[2];
     this.session.text[new_topic] = "- empty -";
 
+    this.updateSession();
     return this.sendResponse("Topic " + new_topic + " created.");
   },
 
@@ -113,6 +114,7 @@ module.exports = {
     this.session.text[topic_name_new] = this.session.text[topic_name_old];
     delete this.session.text[topic_name_old];
 
+    this.updateSession();
     return this.sendResponse("Successfully renaming " + topic_name_old + " to " + topic_name_new + ".");
   },
 

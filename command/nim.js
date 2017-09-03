@@ -41,9 +41,6 @@ module.exports = {
     if (this.argc < 2) {
       return this.helpText();
     } else {
-      if ((this.argc > 2 && isNaN(this.args[2])) || this.argc > 3) {
-        return this.sendResponse("Invalid command usage");
-      }
       return this.searchQuery();
     }
   },
@@ -62,24 +59,35 @@ module.exports = {
 
   searchQuery : function() {
     let page = 0;
-    if (this.argc > 2) { page = 0 - 1 + Number(this.args[2]); }
+    let query = "";
+    if (isNaN(this.args[this.argc-1])) {
+      for (var i=1; i<this.argc  ; i++) { if (i != 1) query += " "; query += this.args[i]; }
+    } else {
+      for (var i=1; i<this.argc-1; i++) { if (i != 1) query += " "; query += this.args[i]; }
+      page = 0-1+this.args[this.argc-1];
+    }
 
     const request = require('request');
     var url       = 'https://yonasadiel.com/lamia/search';
-    url          += '?query=' + this.args[1];
-    url          += '&page=' + page;
+    url          += '?query=' + query;
+    url          += '&page='  + page;
 
     request(url, this.searchQueryCallback.bind(this));
   },
 
   searchQueryCallback : function(error, response, body) {
     let page = 1;
-    if (this.argc > 2) { page = this.args[2]; }
-    console.log(body);
+    let query = "";
+    if (isNaN(this.args[this.argc-1])) {
+      for (var i=1; i<this.argc  ; i++) { if (i != 1) query += " "; query += this.args[i]; }
+    } else {
+      for (var i=1; i<this.argc-1; i++) { if (i != 1) query += " "; query += this.args[i]; }
+      page = this.args[this.argc-1];
+    }
 
     data = JSON.parse(body);
 
-    let text = "" + data["count"] + " data found for: " + this.args[1] + "\nPage " + page;
+    let text = "" + data["count"] + " data found for: " + query + "\nPage " + page;
     for (var i = 0; i < data["result"].length; i++) {
       text += "\n\n";
       text += "[" + data["result"][i]["name"] + "]\n";

@@ -59,7 +59,7 @@ module.exports = {
 
   searchQuery : function() {
     let page = 0;
-    if (this.argc > 2) { page = this.args[2]; }
+    if (this.argc > 2) { page = 0 - 1 + this.args[2]; }
 
     const request = require('request');
     var url       = 'https://yonasadiel.com/lamia/search';
@@ -70,7 +70,7 @@ module.exports = {
   },
 
   searchQueryCallback : function(error, response, body) {
-    let page = 0;
+    let page = 1;
     if (this.argc > 2) { page = this.args[2]; }
     console.log(body);
 
@@ -78,12 +78,13 @@ module.exports = {
 
     let text = "Result for: " + this.args[1] + " page " + page + "\n";
     for (var i = 0; i < data["result"].length; i++) {
+      text += "\n";
       text += "[" + data["result"][i]["name"] + "]\n";
       text += data["result"][i]["nim_tpb"];
-      if (data["result"][i]["nim_tpb"] == data["result"][i]["nim_prodi"])
+      if (data["result"][i]["nim_tpb"] != data["result"][i]["nim_prodi"])
         text += " | " + data["result"][i]["nim_tpb"];
       text += "\n";
-      text += data["result"][i]["major"];
+      text += data["result"][i]["major"] + "\n";
     }
 
     this.sendResponse(text);

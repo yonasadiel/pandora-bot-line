@@ -64,7 +64,7 @@ module.exports = {
       for (var i=1; i<this.argc  ; i++) { if (i != 1) query += " "; query += this.args[i]; }
     } else {
       for (var i=1; i<this.argc-1; i++) { if (i != 1) query += " "; query += this.args[i]; }
-      page = 0-1+this.args[this.argc-1];
+      page = 0-1+Number(this.args[this.argc-1]);
     }
 
     const request = require('request');

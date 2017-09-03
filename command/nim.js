@@ -52,7 +52,10 @@ module.exports = {
     let text = "";
 
     text += "Usage:\n";
-    text += "!nim <nim|name> [page]";
+    text += "!nim <nim|name> [page]\n\n";
+    text += "Use web version for more\n";
+    text += "yonasadiel.com/lamia"
+
 
     return this.sendResponse(text);
   },
@@ -76,7 +79,7 @@ module.exports = {
 
     data = JSON.parse(body);
 
-    let text = "" + data["count"] + " data found for: " + this.args[1] + "\n Page " + page + "\n";
+    let text = "" + data["count"] + " data found for: " + this.args[1] + "\nPage " + page;
     for (var i = 0; i < data["result"].length; i++) {
       text += "\n\n";
       text += "[" + data["result"][i]["name"] + "]\n";
